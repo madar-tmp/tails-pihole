@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 echo "Starting Tailscale daemon in userspace mode..."
 # Render containers are unprivileged, so we MUST use userspace networking
@@ -10,12 +10,11 @@ sleep 5
 # Authenticate Tailscale using the environment variable
 if [ -n "$TAILSCALE_AUTHKEY" ]; then
     echo "Authenticating Tailscale..."
-    # --accept-dns=false prevents Tailscale from overriding Pi-hole's internal DNS routing
     tailscale up --authkey="${TAILSCALE_AUTHKEY}" --hostname=render-pihole --ssh --accept-dns=false
 else
     echo "ERROR: TAILSCALE_AUTHKEY environment variable is missing!"
 fi
 
-echo "Handing over to Pi-hole s6-overlay init system..."
-# exec replaces the current bash process with Pi-hole's init, keeping the container alive
-exec /s6-init
+echo "Handing over to native Pi-hole v6 boot sequence..."
+# exec replaces the current process with Pi-hole's native v6 entrypoint
+exec /start.sh
