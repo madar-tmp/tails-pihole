@@ -1,16 +1,14 @@
 FROM pihole/pihole:latest
 
-# Update packages and install Tailscale
-RUN apt-get update && apt-get install -y curl && \
-    curl -fsSL https://tailscale.com/install.sh | sh && \
-    rm -rf /var/lib/apt/lists/*
+# Pi-hole v6 uses Alpine Linux, so we must use 'apk' to install packages
+RUN apk update && apk add --no-cache curl tailscale
 
 # Copy the custom initialization script
-COPY start.sh /start.sh
-RUN chmod +x /start.sh
+COPY start.sh /custom-start.sh
+RUN chmod +x /custom-start.sh
 
 # Expose port 80 so Render can route the web admin dashboard
 EXPOSE 80
 
 # Override the default entrypoint to run our script first
-ENTRYPOINT ["/start.sh"]
+ENTRYPOINT ["/custom-start.sh"]
