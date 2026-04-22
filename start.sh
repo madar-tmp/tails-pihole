@@ -15,10 +15,14 @@ if [ -n "$TAILSCALE_AUTHKEY" ]; then
     echo "Authenticating Tailscale node..."
     tailscale up --authkey="${TAILSCALE_AUTHKEY}" --ssh --hostname=render-pihole --accept-dns=false
 else
-    echo "CRITICAL ERROR: TAILSCALE_AUTHKEY environment variable is missing!"
+    echo "CRITICAL ERROR: TAILSCALE_AUTH_KEY environment variable is missing!"
     exit 1
 fi
 
-echo "Handing over to native Pi-hole v6 boot sequence..."
-# Execute Pi-hole's native start script (NO forward slash, so it uses the system PATH)
-exec start.sh
+echo "Running native Pi-hole v6 boot sequence..."
+# Run the Pi-hole start script in the background
+/usr/bin/start.sh &
+
+# Hold the container open forever so Docker doesn't think it exited
+echo "Initialization complete. Tailing Pi-hole logs..."
+tail -f /var/log/pihole/pihole.log /var/log/pihole/FTL.log
