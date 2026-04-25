@@ -1,22 +1,17 @@
 FROM pihole/pihole:latest
 
-# Pi-hole v6 uses Alpine Linux, so we must use 'apk' to install packages
-RUN apk update && apk add --no-cache curl tailscale
+# Pi-hole v6 uses Alpine Linux. Add sqlite to interact with the database.
+RUN apk update && apk add --no-cache curl tailscale sqlite
 
-# Download and install cloudflared for DNS-over-HTTPS encryption
-RUN curl -L -o /usr/local/bin/cloudflared https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 && \
-    chmod +x /usr/local/bin/cloudflared
-
-# Create a web directory and a fake index.html for public visitors
-RUN mkdir -p /var/www/web && \
-    echo "<html><head><title>404 Not Found</title></head><body style='background:#f4f4f4; text-align:center; padding-top:100px; font-family:sans-serif; color:#333;'><h1>404 - Not Found</h1><p>The requested resource could not be found on this server.</p></body></html>" > /var/www/web/index.html
+# Copy your custom adlists file from GitHub into the container
+COPY adlists.txt /adlists.txt
 
 # Copy the custom initialization script
 COPY start.sh /custom-start.sh
 RUN chmod +x /custom-start.sh
 
-# Force Render to only see Port 8000 for public traffic
-EXPOSE 8000
+# Expose port 80 so Render can route the web admin dashboard
+EXPOSE 80
 
 # Override the default entrypoint to run our script first
 ENTRYPOINT ["/custom-start.sh"]
