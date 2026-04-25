@@ -1,0 +1,9 @@
+https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts
+https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/adblock/pro.mini.txt
+https://adguardteam.github.io/HostlistsRegistry/assets/filter_15.txt
+https://raw.githubusercontent.com/jerryn70/GoodbyeAds/master/Hosts/GoodbyeAds.txt
+https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/adblock/urlshortener.txt
+https://raw.githubusercontent.com/x0uid/SpotifyAdBlock/refs/heads/master/SpotifyBlocklist.txt
+https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/adblock/fake.txt
+https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/adblock/gambling.txt
+https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/adblock/social.txt
