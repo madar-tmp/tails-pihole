@@ -24,7 +24,7 @@ sleep 5
 # Authenticate Tailscale
 if [ -n "$TAILSCALE_AUTHKEY" ]; then
     echo "Authenticating Tailscale node..."
-    tailscale up --authkey="${TAILSCALE_AUTHKEY}" --ssh --hostname=render-pihole --accept-dns=false
+    tailscale up --authkey="${TAILSCALE_AUTHKEY}" --ssh --hostname=tails-pihole --accept-dns=false
 else
     echo "CRITICAL ERROR: TAILSCALE_AUTH_KEY environment variable is missing!"
     exit 1
