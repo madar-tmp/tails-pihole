@@ -5,7 +5,7 @@ mkdir -p /var/lib/tailscale
 
 # 1. HARDCODE PORTS
 DUMMY_PORT="8000"
-PIHOLE_PORT="8080"
+PIHOLE_PORT="8001"
 
 # Force Pi-hole v6 to run its admin dashboard strictly on 8080
 export FTLCONF_webserver_port="$PIHOLE_PORT"
