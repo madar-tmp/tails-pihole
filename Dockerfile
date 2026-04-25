@@ -16,9 +16,9 @@ COPY start.sh /custom-start.sh
 RUN chmod +x /custom-start.sh
 
 # Expose port 80 for Render (which will serve the public web page)
-# Expose port 8080 for your private Tailnet Pi-hole access
+# Expose port 8080 for your private Tailnet Pi-hole access via ren
 EXPOSE 80
-EXPOSE 8080
+#EXPOSE 8080
 
 # Override the default entrypoint to run our script first
 ENTRYPOINT ["/custom-start.sh"]
