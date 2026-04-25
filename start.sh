@@ -3,22 +3,17 @@
 # Create the state directory so Tailscale doesn't throw a missing folder warning
 mkdir -p /var/lib/tailscale
 
-# 1. CAPTURE RENDER'S PUBLIC PORT
-# We grab Render's injected port (8000) before Pi-hole can see it.
-PUBLIC_PORT=${PORT:-8000}
+# 1. BIND THE DUMMY SERVER TO THE PUBLIC INTERFACE
+# We grab Render's injected port (8000) and explicitly bind to 0.0.0.0
+# This absorbs all public traffic from tails-pihole.onrender.com
+RENDER_PORT=${PORT:-8000}
+echo "Starting dummy public web server on port $RENDER_PORT..."
+busybox httpd -p 0.0.0.0:$RENDER_PORT -h /var/www/web
 
-echo "Starting dummy public web server on port $PUBLIC_PORT..."
-# Bind the dummy server explicitly to 0.0.0.0 on the public port
-busybox httpd -f -p 0.0.0.0:$PUBLIC_PORT -h /var/www/web &
-
-# 2. THE MAGIC FIX: DESTROY THE PORT VARIABLE
-# By wiping this variable from existence, Pi-hole can't hijack Render's public router.
-unset PORT
-
-# 3. FORCE PI-HOLE INTO HIDING
-# Set both v5 and v6 port variables to 8080 just to be absolutely bulletproof.
-export FTLCONF_webserver_port="8080"
-export WEB_PORT="8080"
+# 2. BIND PI-HOLE STRICTLY TO LOCALHOST (THE FIX)
+# By specifying 127.0.0.1, Pi-hole becomes completely invisible to Render's edge router 
+# and the public internet. Only internal container processes (like Tailscale) can reach it.
+export FTLCONF_webserver_port="127.0.0.1:8080"
 
 echo "Starting Tailscale daemon in userspace mode..."
 # Run tailscaled in the background with userspace networking
@@ -40,9 +35,9 @@ echo "Starting cloudflared proxy for DNS-over-HTTPS..."
 # Run cloudflared in the background.
 cloudflared proxy-dns --port 5053 --upstream https://1.1.1.1/dns-query --upstream https://9.9.9.9/dns-query &
 
-echo "Running native Pi-hole boot sequence on port 8080..."
-# Run the Pi-hole start script in the background
-/usr/bin/start.sh &
+echo "Running native Pi-hole boot sequence..."
+# Strip the PORT variable so Pi-hole doesn't try to override our localhost command
+env -u PORT /usr/bin/start.sh &
 
 # Hold the container open forever so Docker doesn't think it exited
 echo "Initialization complete. Tailing Pi-hole logs..."
