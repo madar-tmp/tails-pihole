@@ -20,6 +20,11 @@ else
     exit 1
 fi
 
+echo "Starting cloudflared proxy for DNS-over-HTTPS..."
+# Run cloudflared in the background. It will listen on port 5053 
+# and encrypt queries before sending them to 1.1.1.1 and 9.9.9.9
+cloudflared proxy-dns --port 5053 --upstream https://1.1.1.1/dns-query --upstream https://9.9.9.9/dns-query &
+
 echo "Running native Pi-hole v6 boot sequence..."
 # Run the Pi-hole start script in the background
 /usr/bin/start.sh &
