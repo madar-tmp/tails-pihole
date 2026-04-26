@@ -6,6 +6,10 @@ RUN apk update && apk add --no-cache curl tailscale sqlite
 # Copy your custom adlists file from GitHub into the container
 COPY adlists.txt /adlists.txt
 
+# Download and install cloudflared for DNS-over-HTTPS encryption
+RUN curl -L -o /usr/local/bin/cloudflared https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 && \
+    chmod +x /usr/local/bin/cloudflared
+
 # Copy the custom initialization script
 COPY start.sh /custom-start.sh
 RUN chmod +x /custom-start.sh
